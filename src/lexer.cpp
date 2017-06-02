@@ -154,35 +154,30 @@ Lexer::getNextToken()
       return TOKEN_STRING;
     }
     case '#': // constant
-      nextChar();
+      addChar();
 
-      if (c == '(')
-      {
-        nextChar();
-        return TOKEN_ARRAY_START;
-      }
-      else
-      {
+      if(c != '(') {
         while(isalnum(c) || c == '_') {
           addChar();
         }
 
-        if(token_string == "t")
+        if(token_string == "#t")
         {
           return TOKEN_TRUE;
         }
-        else if(token_string == "f")
+        else if(token_string == "#f")
         {
           return TOKEN_FALSE;
         }
         else
         {
-          // we only handle #t and #f constants at the moment...
-          std::stringstream msg;
-          msg << "Parse Error in line " << linenumber << ": "
-              << "Unknown constant '" << token_string << "'.";
-          throw std::runtime_error(msg.str());
+          return TOKEN_SYMBOL;
         }
+      }
+      else if (c == '(')
+      {
+        nextChar();
+        return TOKEN_ARRAY_START;
       }
 
     case EOF:
